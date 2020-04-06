@@ -1,48 +1,48 @@
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import unfetch from 'isomorphic-unfetch'
-import React from 'react'
-import { useRouter } from 'next/router'
+import slug from 'slug'
 
-function CharacterDetail({}) {
-  const router = useRouter()
-  const { slug } = router.query
-
-  const id = slug.split('-').slice(-1)[0]
-
-  const [character, setCharacter] = React.useState(null)
-
-  React.useEffect(() => {
-    getCharacter()
-  }, [])
-
-  const getCharacter = async () => {
-    const data = await unfetch(
-      'https://rickandmortyapi.com/api/character/' + id
-    )
-    const character = await data.json()
-    setCharacter(character)
-  }
-
+function CharacterDetail({ character }) {
   return (
     <Layout>
       <Head>
         <title>Ana sayfa</title>
       </Head>
 
-      {character ? (
-        <div>
-          <h1>{character.name}</h1>
+      <h1>{character.name}</h1>
 
-          <figure>
-            <img src={character.image} alt={character.name} />
-          </figure>
-        </div>
-      ) : (
-        <div>Yükleniyor</div>
-      )}
+      <figure>
+        <img src={character.image} alt={character.name} />
+      </figure>
     </Layout>
   )
+}
+
+export async function getStaticPaths() {
+  const data = await unfetch('https://rickandmortyapi.com/api/character/')
+  const characters = await data.json()
+
+  const paths = characters.results.map(character => {
+    return { params: { slug: `${slug(character.name)}-${character.id}` } }
+  })
+
+  return {
+    paths,
+    fallback: false
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const id = params.slug.split('-').slice(-1)[0]
+  const data = await unfetch('https://rickandmortyapi.com/api/character/' + id)
+  const character = await data.json()
+
+  return {
+    props: {
+      character
+    }
+  }
 }
 
 export default CharacterDetail

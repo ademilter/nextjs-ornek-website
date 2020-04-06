@@ -10,7 +10,7 @@ function HomePage({ characters }) {
       <Head>
         <title>Ana sayfa</title>
       </Head>
-      <h1 className="title">İlk web siteme hoş geldin!</h1>
+      <h1 className="title">THE RICK AND MORTY</h1>
 
       <ul>
         {characters.results.map(character => (
