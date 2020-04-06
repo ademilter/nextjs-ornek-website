@@ -10,7 +10,6 @@ function Layout({ children }) {
       </Head>
       <Navigation />
       <main>{children}</main>
-      <footer>design by adem</footer>
     </div>
   )
 }
